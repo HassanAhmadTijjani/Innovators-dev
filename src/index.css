@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #16A34A;
+  --color-primary-dark: #15803D;
+  --color-primary-light: #DCFCE7;
+  --color-brand-black: #0D0D0D;
+  --color-brand-charcoal: #1F1F1F;
+  --color-neutral-slate: #6B7280;
+  --color-neutral-light: #F3F4F6;
+  --font-family-sans: 'Inter', sans-serif;
+}
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f1f9f3;
+  color: #1F1F1F;
+}
+
+/* Smooth scrolling for the whole app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove default list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default anchor styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Make images behave */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Default input/button font — browsers don't inherit this automatically */
+input,
+button,
+textarea,
+select {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar styling — thin green scrollbar to match brand */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #16A34A;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #15803D;
+}
+
+/* Print styles — only receipt shows when printing */
+@media print {
+  /* body * {
+    visibility: hidden;
+  } */
+
+  .print-receipt,
+  .print-receipt * {
+    visibility: visible;
+  }
+
+  .print-receipt {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
