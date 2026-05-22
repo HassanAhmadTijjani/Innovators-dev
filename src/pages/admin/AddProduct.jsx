@@ -128,7 +128,7 @@ export default function AddProduct() {
 
     function removeColor(color) {
         setColors(colors.filter(c => c !== color))
-      }
+    }
 
     return (
         <AdminLayout>
@@ -409,6 +409,7 @@ export default function AddProduct() {
                                 </p>
                             </div>
                         </label>
+
                     </div>
 
                     {/* Submit */}

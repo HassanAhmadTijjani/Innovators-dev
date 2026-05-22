@@ -6,7 +6,7 @@ import { useProducts } from '../../hooks/useProducts'
 import toast from 'react-hot-toast'
 
 export default function Products() {
-    const { products, loading, deleteProduct } = useProducts()
+    const { products, loading, deleteProduct, fetchProducts, toggleFeatured } = useProducts()
     const [search, setSearch] = useState('')
     const navigate = useNavigate()
     const [deleting, setDeleting] = useState(null)
@@ -173,6 +173,7 @@ export default function Products() {
                                    uppercase tracking-wider">
                                             Actions
                                         </th>
+
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
@@ -234,12 +235,20 @@ export default function Products() {
                                             {/* Status */}
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-col gap-1">
-                                                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold w-fit ${product.is_active
-                                                        ? 'bg-primary-light text-primary-dark'
-                                                        : 'bg-gray-100 text-neutral-slate'
+                                                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs
+                      font-semibold w-fit
+      ${product.is_active
+                                                            ? 'bg-primary-light text-primary-dark'
+                                                            : 'bg-gray-100 text-neutral-slate'
                                                         }`}>
                                                         {product.is_active ? 'Active' : 'Inactive'}
                                                     </span>
+                                                    {product.is_featured && (
+                                                        <span className="inline-flex px-2.5 py-1 rounded-full text-xs
+                        font-semibold bg-amber-100 text-amber-700 w-fit">
+                                                            ⭐ Featured
+                                                        </span>
+                                                    )}
                                                     {product.stock === 0 && (
                                                         <span className="inline-flex px-2.5 py-1 rounded-full text-xs
                         font-semibold bg-red-100 text-red-600 w-fit">
@@ -268,6 +277,29 @@ export default function Products() {
                                        disabled:opacity-50"
                                                     >
                                                         {deleting === product.id ? 'Deleting...' : 'Delete'}
+                                                    </button>
+                                                    {/* Featured Toggle */}
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                await toggleFeatured(product.id, product.is_featured)
+                                                                toast.success(
+                                                                    product.is_featured
+                                                                        ? 'Removed from featured'
+                                                                        : 'Added to featured!'
+                                                                )
+                                                            } catch (err) {
+                                                                toast.error(err.message)
+                                                            }
+                                                        }}
+                                                        title={product.is_featured ? 'Remove from featured' : 'Mark as featured'}
+                                                        className={`text-lg transition-all hover:scale-110
+    ${product.is_featured
+                                                                ? 'text-amber-400 hover:text-amber-600'
+                                                                : 'text-gray-300 hover:text-amber-400'
+                                                            }`}
+                                                    >
+                                                        ★
                                                     </button>
                                                 </div>
                                             </td>
