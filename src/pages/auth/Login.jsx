@@ -15,7 +15,7 @@ export default function Login() {
     function handleChange(e) {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
-    
+
     async function handleSubmit(e) {
         e.preventDefault()
         setError('')
@@ -29,7 +29,7 @@ export default function Login() {
         } finally {
             setLoading(false)
         }
-      }
+    }
 
     return (
         <div className="min-h-screen bg-neutral-light flex items-center justify-center px-8">
@@ -81,7 +81,10 @@ export default function Login() {
                         />
                     </div>
 
-                    <div className="text-right">
+                    <div className="flex justify-between items-center text-sm text-neutral-slate">
+                        <Link to='/' className='text-sm text-primary hover:underline font-medium' >
+                            Home
+                        </Link>
                         <Link to="/forgot-password"
                             className="text-sm text-primary hover:underline font-medium">
                             Forgot password?
@@ -109,6 +112,6 @@ export default function Login() {
 
             </div>
         </div>
-        
+
     )
 }

@@ -3,8 +3,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useEffect } from 'react';
 import Layout from '../../components/common/Layout'
 import { useCart } from '../../context/CartContext'
+import useSettings from '../../hooks/useSettings';
 
 export default function Cart() {
+    const { settings } = useSettings()
+
     // Scroll to top on component mount
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -74,7 +77,7 @@ export default function Cart() {
                   px-4 py-3 mb-6 flex items-center gap-3">
                         <span className="text-xl shrink-0">⏰</span>
                         <p className="text-amber-800 text-sm">
-                            <span className="font-semibold">Items expire after 3 days.</span>{' '}
+                            <span className="font-semibold">Items expire after {settings?.cart_expiry_days} days.</span>{' '}
                             Complete your purchase before your cart is automatically cleared.
                         </p>
                     </div>

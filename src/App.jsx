@@ -33,6 +33,7 @@ import PromoCodes from './pages/admin/PromoCodes'
 import Analytics2 from './pages/admin/Analytics'
 import Settings from './pages/admin/Settings'
 import { Analytics } from "@vercel/analytics/react"
+import WhatsappFloat from './components/common/WhatsappFloat'
 
 
 // function Home() { return <h1 className="p-8 text-2xl font-bold text-primary">🏠 Customer Home</h1> }
@@ -189,7 +190,8 @@ const App = () => {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-        <Analytics />
+      <WhatsappFloat />
+      <Analytics />
     </>
   )
 }

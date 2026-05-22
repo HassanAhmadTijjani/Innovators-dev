@@ -7,7 +7,7 @@ export function useProducts() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
-    const  fetchProducts = async() => {
+    const fetchProducts = async () => {
         setLoading(true)
         const { data, error } = await supabase
             .from('products')
@@ -22,7 +22,7 @@ export function useProducts() {
         setLoading(false)
     }
 
-    const addProduct = async(productData) => {
+    const addProduct = async (productData) => {
         const { data, error } = await supabase
             .from('products')
             .insert(productData)
@@ -34,7 +34,7 @@ export function useProducts() {
         return data
     }
 
-    const updateProduct = async(id, productData) => {
+    const updateProduct = async (id, productData) => {
         const { error } = await supabase
             .from('products')
             .update({ ...productData, updated_at: new Date().toISOString() })
@@ -44,7 +44,7 @@ export function useProducts() {
         await fetchProducts()
     }
 
-    const deleteProduct = async(id) => {
+    const deleteProduct = async (id) => {
         const { error } = await supabase
             .from('products')
             .delete()
@@ -54,7 +54,7 @@ export function useProducts() {
         await fetchProducts()
     }
 
-   
+
     const fetchCategories = useCallback(async () => {
         const { data, error } = await supabase
             .from('categories')
@@ -63,6 +63,17 @@ export function useProducts() {
         if (error) throw error
         return data
     }, [])
+
+    // Featured Toggler
+    const toggleFeatured = async (productId, currentValue) => {
+        const { error } = await supabase
+            .from('products')
+            .update({ is_featured: !currentValue })
+            .eq('id', productId)
+
+        if (error) throw error
+        await fetchProducts()
+    }
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -78,5 +89,6 @@ export function useProducts() {
         updateProduct,
         deleteProduct,
         fetchCategories,
+        toggleFeatured,
     }
 }

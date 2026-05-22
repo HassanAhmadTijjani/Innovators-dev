@@ -98,12 +98,11 @@ export function useCheckout() {
         if (itemsError) throw itemsError
 
         for (const item of cartItems) {
-            const newStock = item.products.stock - item.quantity
-            await supabase
-                .from('products')
-                .update({ stock: newStock })
-                .eq('id', item.product_id)
-        }
+            await supabase.rpc('reduce_product_stock', {
+                p_product_id: item.product_id,
+                p_quantity: item.quantity,
+            })
+          }
 
         if (promoCode) {
             const { data: promo } = await supabase

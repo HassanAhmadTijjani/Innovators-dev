@@ -224,9 +224,9 @@ const About = () => {
             <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Follow</p>
             <p className="text-slate-600 leading-7">Stay updated on product releases and business services.</p>
             <div className="mt-6 space-y-3 text-green-600 text-sm">
-              <a target='_blank' rel='noopener noreferrer' href="https://www.instagram.com/mayorbusinesshub.ng?igsh=NHhyMDYydHN1OGdh" className="hover:text-slate-900 block border-b-2">Join us on Instagram</a>
-              <a target='_blank' rel='noopener noreferrer' href="#" className="hover:text-slate-900 block border-b-2">Join us on Facebook</a>
-              <a target='_blank' rel='noopener noreferrer' href="https://www.tiktok.com/@mayorbusinesshub.ng?_r=1&_t=ZS-96PxLxvkBcd" className="hover:text-slate-900 block border-b-2">Join us on Tiktok</a>
+              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.instagram_url}`} className="hover:text-slate-900 block border-b-2">Join us on Instagram</a>
+              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.facebook_url}`} className="hover:text-slate-900 block border-b-2">Join us on Facebook</a>
+              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.twitter_url}`} className="hover:text-slate-900 block border-b-2">Join us on Tiktok</a>
             </div>
           </div>
         </div>
