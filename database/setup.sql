@@ -387,55 +387,43 @@ add column if not exists order_success_message text default 'Thank you for your 
 ------------------------------------------------------------
 -- Drop the current open policy
 drop policy if exists "Anyone can read settings" on settings;
+-- Drop the old public view
+drop view if exists public_settings;
 
--- Public can only read non-sensitive fields
--- We handle this by creating a public view
+-- Recreate with two versions
+-- Public view (for guests/anonymous) — no bank details
 create or replace view public_settings as
   select
-    store_name,
-    store_description,
-    store_phone,
-    store_email,
-    store_address,
-    business_hours,
-    logo_url,
-    hero_badge_text,
-    hero_cta_text,
-    stat_products,
-    stat_customers,
-    stat_deliveries,
-    why_choose_us,
-    store_categories,
-    currency_symbol,
-    whatsapp_number,
-    instagram_url,
-    twitter_url,
-    facebook_url,
-    delivery_fee_lagos,
-    delivery_fee_nigeria,
-    delivery_fee_outside,
-    cart_expiry_days,
-    payment_instructions,
-    order_success_message
-    -- ❌ NOT included: bank_name, account_number,
-    --    account_name, super_admin_phone
-  from settings
-  where id = 'store';
+    store_name, store_description, store_phone,
+    store_email, store_address, business_hours,
+    logo_url, hero_badge_text, hero_cta_text,
+    stat_products, stat_customers, stat_deliveries,
+    why_choose_us, store_categories, currency_symbol,
+    whatsapp_number, instagram_url, twitter_url,
+    facebook_url, delivery_fee_lagos, delivery_fee_nigeria,
+    delivery_fee_outside, cart_expiry_days,
+    payment_instructions, order_success_message
+  from settings where id = 'store';
 
--- Allow anyone to read the public view
-grant select on public_settings to anon, authenticated;
+-- Customer view (for logged-in customers) — includes bank details
+create or replace view customer_settings as
+  select
+    store_name, store_description, store_phone,
+    store_email, store_address, business_hours,
+    logo_url, hero_badge_text, hero_cta_text,
+    stat_products, stat_customers, stat_deliveries,
+    why_choose_us, store_categories, currency_symbol,
+    whatsapp_number, instagram_url, twitter_url,
+    facebook_url, delivery_fee_lagos, delivery_fee_nigeria,
+    delivery_fee_outside, cart_expiry_days,
+    payment_instructions, order_success_message,
+    -- ✅ Bank details included for paying customers
+    bank_name, account_number, account_name
+  from settings where id = 'store';
 
--- Only admin can read full settings (including bank details)
-create policy "Admin can read full settings"
-  on settings for select
-  using (is_admin());
-
--- Only super admin can update settings
-create policy "Super admin can update settings"
-  on settings for update
-  using (auth.uid() in (
-    select id from profiles where role = 'super_admin'
-  ));
+-- Grant access
+grant select on public_settings   to anon, authenticated;
+grant select on customer_settings  to authenticated;
 
 
 
@@ -481,4 +469,37 @@ create policy "Customers can insert own order items"
       where orders.id = order_id
         and orders.customer_id = auth.uid()
     )
+  );
+
+
+
+
+
+  ---------------------------------------------------------------------
+  -- Avatar Table
+  -----------------------------------------------------------------------------
+  alter table profiles
+add column if not exists avatar_url text;
+
+-- storage bucket for avatars
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict do nothing;
+
+create policy "Users can upload own avatar"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'avatars'
+    and auth.role() = 'authenticated'
+  );
+
+create policy "Public can view avatars"
+  on storage.objects for select
+  using (bucket_id = 'avatars');
+
+create policy "Users can update own avatar"
+  on storage.objects for update
+  using (
+    bucket_id = 'avatars'
+    and auth.role() = 'authenticated'
   );

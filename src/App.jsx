@@ -34,6 +34,7 @@ import Analytics2 from './pages/admin/Analytics'
 import Settings from './pages/admin/Settings'
 import { Analytics } from "@vercel/analytics/react"
 import WhatsappFloat from './components/common/WhatsappFloat'
+import Profile from './pages/customer/Profile'
 
 
 // function Home() { return <h1 className="p-8 text-2xl font-bold text-primary">🏠 Customer Home</h1> }
@@ -105,6 +106,12 @@ const App = () => {
         <Route path="/orders/:id" element={
           <ProtectedRoute allowedRoles={['customer']}>
             <OrderTracking />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/profile" element={
+          <ProtectedRoute allowedRoles={['customer']}>
+            <Profile />
           </ProtectedRoute>
         } />
 

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
@@ -14,7 +15,8 @@ const Navbar = () => {
     const linkClass = ({ isActive }) => isActive ? 'bg-green-600 text-white px-3 py-2 rounded-sm font-bold' : 'text-white px-3 py-2 rounded-sm hover:bg-green-700'
     const { user, profile, logout } = useAuth()
     const { cartCount } = useCart()
-    const {settings} = useSettings()
+    const { settings } = useSettings()
+    const navigate = useNavigate()
     
     
     return (
@@ -60,6 +62,39 @@ const Navbar = () => {
                             )}
                         </Link>
                     )}
+
+
+                    {/* Profile Avatar — customer only */}
+                    {user && profile?.role === 'customer' && (
+                        <button
+                            onClick={() => navigate('/profile')}
+                            className="w-9 h-9 rounded-full overflow-hidden border-2
+               border-primary/20 hover:border-primary transition-all
+               shrink-0"
+                            title="My Profile"
+                        >
+                            {profile?.avatar_url ? (
+                                <img
+                                    src={profile.avatar_url}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-linear-to-br from-primary
+                      to-green-400 flex items-center justify-center">
+                                    <span className="text-white font-bold text-xs">
+                                        {(profile?.full_name || user?.email || 'U')
+                                            .split(' ')
+                                            .map(w => w[0])
+                                            .join('')
+                                            .toUpperCase()
+                                            .slice(0, 2)}
+                                    </span>
+                                </div>
+                            )}
+                        </button>
+                    )}
+
                     {user ? (<div>
                         <span>Hi, {profile?.full_name} </span>
                         <button onClick={logout} className='bg-amber-800 p-2 rounded'>Logout</button>
@@ -133,6 +168,18 @@ const Navbar = () => {
                             <span>Cart ({cartCount})</span>
                         </NavLink>
                     )}
+
+                    {/* Mobile — Profile link */}
+                    {user && profile?.role === 'customer' && (
+                        <NavLink
+                            to='/profile'
+                            className={linkClass}
+                            onClick={() => setIsOpen(false)}
+                        >
+                            👤 My Profile
+                        </NavLink>
+                    )}
+
                     {user ? (<div>
                         <span>Hi, {profile?.full_name} </span>
                         <button onClick={logout} className='bg-amber-800 p-2 rounded'>Logout</button>

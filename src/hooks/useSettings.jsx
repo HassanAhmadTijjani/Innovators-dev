@@ -5,17 +5,18 @@ import { useAuth } from '../context/AuthContext'
 const useSettings = () => {
     const [settings, setSettings] = useState(null)
     const [loading, setLoading] = useState(true)
-    const { profile } = useAuth()
+    const { profile, user } = useAuth()
 
     async function fetchSettings() {
         try {
-            const isAdmin = profile?.role === 'super_admin'
-                || profile?.role === 'admin'
-
             let data, error
 
+            const isAdmin = profile?.role === 'super_admin'
+                || profile?.role === 'admin'
+            const isLoggedIn = !!user
+
             if (isAdmin) {
-                // admins get full settings including bank details
+                // ✅ Admins get everything — full settings table
                 const result = await supabase
                     .from('settings')
                     .select('*')
@@ -23,8 +24,18 @@ const useSettings = () => {
                     .maybeSingle()
                 data = result.data
                 error = result.error
+
+            } else if (isLoggedIn) {
+                // ✅ Logged in customers get bank details too
+                const result = await supabase
+                    .from('customer_settings')
+                    .select('*')
+                    .maybeSingle()
+                data = result.data
+                error = result.error
+
             } else {
-                // customers and guests get only public info
+                // ✅ Guests get public info only — no bank details
                 const result = await supabase
                     .from('public_settings')
                     .select('*')
@@ -34,7 +45,7 @@ const useSettings = () => {
             }
 
             if (error) throw error
-            setSettings(data)
+            if (data) setSettings(data)
         } catch (err) {
             console.error('Settings error:', err)
         } finally {
@@ -51,7 +62,9 @@ const useSettings = () => {
         await fetchSettings()
     }
 
-    useEffect(() => { fetchSettings() }, [profile?.role])
+    useEffect(() => {
+        fetchSettings()
+    }, [profile?.role, user?.id])
 
     return { settings, loading, fetchSettings, updateSettings }
 }

@@ -97,8 +97,18 @@ export function AuthProvider({ children }) {
         if (error) throw error
     }
 
+    async function refreshProfile() {
+        if (!user) return
+        const { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+        if (data) setProfile(data)
+      }
+
     // packing all into one object, so any component in the app can eccess all of this
-    const value = { user, profile, loading, register, login, logout }
+    const value = { user, profile, loading, refreshProfile, register, login, logout }
 
     return (
         <AuthContext.Provider value={value}>
