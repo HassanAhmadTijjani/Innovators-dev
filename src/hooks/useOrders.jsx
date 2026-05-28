@@ -50,6 +50,9 @@ export function useOrders() {
 
         if (error) throw error
 
+        // Run promo usage logic
+        await supabase.rpc('handle_order_promo', { p_order_id: id })
+
         // fetch the order to get customer email
         const { data: order } = await supabase
             .from('orders')

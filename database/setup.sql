@@ -88,6 +88,8 @@ create table orders (
   payment_method   text,
   payment_status   text default 'pending',
   payment_proof    text,
+  promo_code       text,
+  promo_applied    boolean default false,
   created_at       timestamptz default now(),
   updated_at       timestamptz default now()
 );
@@ -503,3 +505,82 @@ create policy "Users can update own avatar"
     bucket_id = 'avatars'
     and auth.role() = 'authenticated'
   );
+
+
+  ------------------------------------------------
+  -- Reviews & Promocodes
+  ---------------------------------------------------
+  -- Update promo_codes table with missing columns
+alter table promo_codes
+add column if not exists is_system_generated boolean default false,
+add column if not exists generated_for       uuid references profiles(id),
+add column if not exists description         text default '';
+
+-- Update the discount_type check to include free_delivery
+alter table promo_codes
+drop constraint if exists promo_codes_discount_type_check;
+
+alter table promo_codes
+add constraint promo_codes_discount_type_check
+check (discount_type in ('percentage', 'fixed', 'free_delivery'));
+
+-- RLS
+create policy "Admin can manage promo codes"
+  on promo_codes for all
+  using (is_admin())
+  with check (is_admin());
+
+
+
+
+
+-- ── PROMO CODE LOGIC ─────────────────────────
+
+CREATE OR REPLACE FUNCTION handle_order_promo(p_order_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_promo_code TEXT;
+    v_promo_applied BOOLEAN;
+    v_payment_status TEXT;
+    v_status TEXT;
+BEGIN
+    SELECT promo_code, promo_applied, payment_status, status
+    INTO v_promo_code, v_promo_applied, v_payment_status, v_status
+    FROM orders
+    WHERE id = p_order_id;
+
+    IF v_promo_code IS NULL THEN
+        RETURN;
+    END IF;
+
+    -- Logic for incrementing: Must be PAID and in an active delivery state
+    IF v_promo_applied = FALSE 
+       AND v_payment_status = 'paid' 
+       AND v_status IN ('processing', 'shipped', 'delivered') THEN
+        
+        UPDATE promo_codes
+        SET used_count = coalesce(used_count, 0) + 1
+        WHERE upper(code) = upper(v_promo_code);
+
+        UPDATE orders
+        SET promo_applied = TRUE
+        WHERE id = p_order_id;
+
+    -- Logic for decrementing: If it was already applied but now cancelled
+    ELSIF v_promo_applied = TRUE AND v_status = 'cancelled' THEN
+        
+        UPDATE promo_codes
+        SET used_count = GREATEST(0, coalesce(used_count, 0) - 1)
+        WHERE upper(code) = upper(v_promo_code);
+
+        UPDATE orders
+        SET promo_applied = FALSE
+        WHERE id = p_order_id;
+    END IF;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION handle_order_promo(UUID) TO authenticated;

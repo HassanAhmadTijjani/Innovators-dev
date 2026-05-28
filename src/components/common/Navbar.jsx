@@ -12,15 +12,15 @@ import useSettings from '../../hooks/useSettings'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const linkClass = ({ isActive }) => isActive ? 'bg-green-600 text-white px-3 py-2 rounded-sm font-bold' : 'text-white px-3 py-2 rounded-sm hover:bg-green-700'
+    const linkClass = ({ isActive }) => isActive ? 'bg-blue-600 text-white px-3 py-2 rounded-sm font-bold' : 'text-slate-200 px-3 py-2 rounded-sm hover:bg-blue-600/20'
     const { user, profile, logout } = useAuth()
     const { cartCount } = useCart()
     const { settings } = useSettings()
     const navigate = useNavigate()
-    
-    
+
+
     return (
-        <nav className='bg-[#0d0d0d] sticky top-0 z-50 text-white'>
+        <nav className='bg-slate-950/95  border-b border-white/5 sticky top-0 z-50 text-white'>
             <div className="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
 
                 <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ const Navbar = () => {
                                 />
                             ) : (
                                 <div className="w-full h-full bg-linear-to-br from-primary
-                      to-green-400 flex items-center justify-center">
+                      to-blue-400 flex items-center justify-center">
                                     <span className="text-white font-bold text-xs">
                                         {(profile?.full_name || user?.email || 'U')
                                             .split(' ')
@@ -99,9 +99,9 @@ const Navbar = () => {
                         <span>Hi, {profile?.full_name} </span>
                         <button onClick={logout} className='bg-amber-800 p-2 rounded'>Logout</button>
                     </div>) : (
-                            <Link to="/login" className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-semibold transition-all">
-                                Login
-                    </Link>
+                        <Link to="/login" className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-semibold transition-all">
+                            Login
+                        </Link>
                     )}
                 </div>
 
@@ -123,7 +123,7 @@ const Navbar = () => {
             )}
 
             {/* Drawer Menu */}
-            <div className={`fixed top-0 right-0 h-full w-64 bg-[#0d0d0d]/80  z-50 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"    }`} >
+            <div className={`fixed top-0 right-0 h-full w-64 bg-[#0d0d0d]/80  z-50 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`} >
                 <div className="px-6 py-4 flex flex-col gap-6">
 
                     {/* Close button */}
@@ -200,7 +200,7 @@ const Navbar = () => {
                     <NavLink to='/about' className={linkClass}>About</NavLink>
                 </div>
             </div> */}
-      </nav>
+        </nav>
     )
 }
 

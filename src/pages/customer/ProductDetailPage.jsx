@@ -393,7 +393,7 @@ const ProductDetailPage = () => {
                             </button>
 
                             <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer"
-                                className="w-full bg-green-500 hover:bg-green-600 text-white py-3.5
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3.5
                            rounded-xl font-bold text-base text-center transition-all
                            hover:scale-[1.01] flex items-center justify-center gap-2">
                                 💬 Need Info? Chat on WhatsApp

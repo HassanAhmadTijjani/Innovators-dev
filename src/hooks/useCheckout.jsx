@@ -22,12 +22,21 @@ export function useCheckout() {
             throw new Error('This promo code has reached its usage limit')
         }
 
-        if (orderSubtotal < data.min_order_amount) {
+        if (data.min_order_amount && orderSubtotal < data.min_order_amount) {
             throw new Error(
                 `Minimum order amount for this code is ₦${Number(
                     data.min_order_amount
                 ).toLocaleString()}`
             )
+        }
+
+        // ✅ Handle free delivery type
+        if (data.discount_type === 'free_delivery') {
+            return {
+                promoData: data,
+                discountAmount: 0,
+                freeDelivery: true,  // signal to checkout to waive delivery fee
+            }
         }
 
         let discountAmount = 0
@@ -37,8 +46,12 @@ export function useCheckout() {
             discountAmount = data.discount_value
         }
 
-        return { promoData: data, discountAmount }
-    }
+        return {
+            promoData: data,
+            discountAmount: discountAmount,
+            freeDelivery: false,
+        }
+      }
 
     async function placeOrder({
         userId,
@@ -73,6 +86,7 @@ export function useCheckout() {
                 payment_status: 'pending',
                 delivery_fee: deliveryFee,
                 delivery_zone: deliveryZone,
+                promo_code: promoCode ? promoCode.toUpperCase() : null,
 
             })
             .select()
@@ -103,21 +117,6 @@ export function useCheckout() {
                 p_quantity: item.quantity,
             })
           }
-
-        if (promoCode) {
-            const { data: promo } = await supabase
-                .from('promo_codes')
-                .select('used_count')
-                .eq('code', promoCode.toUpperCase())
-                .single()
-
-            if (promo) {
-                await supabase
-                    .from('promo_codes')
-                    .update({ used_count: promo.used_count + 1 })
-                    .eq('code', promoCode.toUpperCase())
-            }
-        }
 
         // send admin notification email
         // await sendEmail('new_order', {

@@ -2,12 +2,14 @@ import React from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import useSettings from '../../hooks/useSettings'
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('')
     const [message, setMessage] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const { settings } = useSettings()
 
     // handle the submit
     const handleSubmit = async (e) => {
@@ -32,12 +34,12 @@ const ForgotPassword = () => {
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-primary">MayorHub</h1>
+                    <h1 className="text-3xl font-extrabold text-primary">{settings?.store_name}</h1>
                     <p className="text-neutral-slate mt-1 text-sm">Reset your password</p>
                 </div>
 
                 {message && (
-                    <div className="bg-green-50 border border-green-200 text-green-700 text-sm
+                    <div className="bg-blue-50 border border-blue-200 text-blue-700 text-sm
                           rounded-lg px-4 py-3 mb-6">
                         {message}
                     </div>
