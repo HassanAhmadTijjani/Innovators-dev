@@ -1,237 +1,307 @@
-﻿// @ts-nocheck
-import { Link } from 'react-router-dom'
+﻿import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import useSettings from '../../hooks/useSettings'
 
 const About = () => {
-  const { settings } = useSettings()
+  const navigate = useNavigate()
+  const { settings, loading } = useSettings()
+
+  const storeName = settings?.store_name || 'Our Store'
+  const storeDesc = settings?.store_description ||
+    'Your trusted shop for quality electronics and accessories.'
+  const phone = settings?.store_phone || ''
+  const email = settings?.store_email || ''
+  const address = settings?.store_address || ''
+  const hours = settings?.business_hours || 'Mon - Sat: 9am - 6pm'
+  const whatsapp = settings?.whatsapp_number || ''
+  const instagram = settings?.instagram_url || ''
+  const twitter = settings?.twitter_url || ''
+  const facebook = settings?.facebook_url || ''
+  const logo = settings?.logo_url || ''
+  const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, '').replace(/^0/, '234')}` : null
+
+  if (loading) return (
+    <div className="max-w-4xl mx-auto px-6 py-10 space-y-6 animate-pulse">
+      <div className="h-64 bg-gray-100 rounded-3xl" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-40 bg-gray-100 rounded-2xl" />
+        ))}
+      </div>
+    </div>
+  )
+
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <section className="bg-slate-950 text-white">
-        <div className="max-w-6xl mx-auto px-6 py-20 lg:px-8 lg:py-24">
-          <div className="max-w-3xl">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-400 mb-4">
-              {settings?.store_name} Global Service Limited
-            </p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6">
-              Powering Smarter Device Sales & Global Services
-            </h1>
-            <p className="text-slate-300 text-base sm:text-lg leading-8 mb-10">
-              {settings?.store_name} Global Service Limited is transforming how devices are bought, sold, and managed — moving from manual operations to a powerful digital platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center rounded-full bg-green-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/20 hover:bg-green-600 transition"
-              >
-                Create Free Account
-              </Link>
-              <Link
-                to="/"
-                className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
-              >
-                Explore Platform
-              </Link>
+    <div className="min-h-screen bg-neutral-light">
+
+      {/* ── HERO ── */}
+      <div className="relative overflow-hidden bg-brand-black">
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-primary/20
+                          rounded-full blur-3xl -translate-y-1/2" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64
+                          bg-primary/10 rounded-full blur-2xl
+                          translate-y-1/2" />
+        <div className="relative max-w-4xl mx-auto px-6 py-16 md:py-20">
+          <div className="flex flex-col md:flex-row items-center
+                            gap-8">
+            {/* Logo */}
+            <div className="w-24 h-24 rounded-2xl overflow-hidden
+                              border-2 border-primary/30 shrink-0">
+              {logo ? (
+                <img src={logo} alt={storeName}
+                  className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-linear-to-br
+                                  from-primary to-green-400 flex items-center
+                                  justify-center">
+                  <span className="text-white font-bold text-2xl">
+                    {storeName.charAt(0)}
+                  </span>
+                </div>
+              )}
             </div>
-            <p className="text-slate-400 text-sm mt-4">
-              Creating a free account gives you instant access to browse devices, place orders, and manage your purchases securely. No hidden fees, no credit card required.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      <section className="max-w-6xl mx-auto px-6 py-16 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-4">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600">Who we are</p>
-            <h2 className="text-3xl font-bold text-slate-900">A growing company with deep experience in devices and services.</h2>
-            <p className="text-slate-600 leading-7">
-              {settings?.store_name} has built strong momentum in iPhone and gadget sales across Nigeria, serving customers with quality products and reliable support.
-            </p>
-            <p className="text-slate-600 leading-7">
-              Today, the business is moving beyond social media and manual sales toward a centralized digital platform that supports growth and operational clarity.
-            </p>
-          </div>
-          <div className="grid gap-5">
-            {[
-              { label: 'iPhones & gadgets', value: 'Market-leading product focus' },
-              { label: 'Manual processes', value: 'Sales and coordination done offline' },
-              { label: 'Team growth', value: 'More staff need better tools' },
-            ].map((item) => (
-              <div key={item.label} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.35em] text-slate-500 mb-3">{item.label}</p>
-                <p className="text-slate-700 font-semibold">{item.value}</p>
+            <div>
+              <div className="inline-flex items-center gap-2
+                                bg-primary/20 border border-primary/30
+                                rounded-full px-4 py-1.5 mb-3">
+                <div className="w-2 h-2 bg-primary rounded-full
+                                  animate-pulse" />
+                <span className="text-primary text-xs font-semibold
+                                   uppercase tracking-wider">
+                  About Us
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white border-t border-b border-slate-200 py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="mb-12">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">The problem</p>
-            <h2 className="text-3xl font-bold text-slate-900">Challenges that slow growth and create risk</h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: 'Manual sales processes', description: 'Orders recorded by hand across chat apps and spreadsheets.' },
-              { title: 'Dependence on social media', description: 'Customer interactions happen on multiple unsecured channels.' },
-              { title: 'Poor order tracking', description: 'It is hard to know order status, stock, and delivery progress.' },
-              { title: 'Limited scalability', description: 'Current workflows cannot support larger volume or more staff.' },
-            ].map((item) => (
-              <div key={item.title} className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-3">{item.title}</h3>
-                <p className="text-slate-600 leading-7">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-6 py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Our solution</p>
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">A centralized platform built for operational control.</h2>
-            <p className="text-slate-600 leading-7 mb-8">
-              {settings?.store_name} brings order management, staff coordination, customer data, and scalability into one business-ready system.            </p>
-          </div>
-          <div className="grid gap-5">
-            {[
-              { title: 'Centralized order management', detail: 'Track every sale, invoice, and delivery step from one dashboard.' },
-              { title: 'Staff coordination tools', detail: 'Assign tasks, monitor performance, and keep teams aligned.' },
-              { title: 'Customer management', detail: 'Capture contact, order history, and service notes in one place.' },
-              { title: 'Scalable digital platform', detail: 'Built to support growth across markets and service lines.' },
-            ].map((item) => (
-              <div key={item.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600 leading-7">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-950 text-white py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { title: 'Buy Devices', description: 'Access verified phones, laptops, and accessories through a trusted platform.' },
-              { title: 'Sell Devices', description: 'List inventory clearly and manage buyer communication professionally.' },
-              { title: 'Swap Devices', description: 'Offer and accept trade deals with transparency and control.' },
-              { title: 'Refer & Earn', description: 'Reward customers and partners for bringing new business.' },
-              { title: 'Business & Tech Services', description: 'Support services for logistics, repairs, and digital operations.' },
-            ].map((item) => (
-              <div key={item.title} className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-lg shadow-black/10">
-                <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
-                <p className="text-slate-300 leading-7">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-6 py-16 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Mission</p>
-            <h3 className="text-2xl font-semibold text-slate-900 mb-4">To deliver reliable, innovative and affordable global services that empower individuals and businesses to thrive in a digital world.</h3>
-            <p className="text-slate-600 leading-7">{settings?.store_name} drives growth through clarity, technology, and dependable service.</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Vision</p>
-            <h3 className="text-2xl font-semibold text-slate-900 mb-4">To become Africa’s most trusted hub for seamless technology, logistics, and business solutions with global impact.</h3>
-            <p className="text-slate-600 leading-7">We aim for a service platform recognized for trust, speed, and commercial reliability.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white border-t border-b border-slate-200 py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-            {[
-              'Trusted business',
-              'Growing brand',
-              'Customer-focused',
-              'Reliable services',
-              '24/7 support',
-            ].map((item) => (
-              <div key={item} className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center">
-                <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-2">{item}</p>
-                <p className="text-slate-600 text-sm leading-6">{item === 'Trusted business' ? 'Built for high-value sales and service delivery.' : item === 'Growing brand' ? 'Scaling with disciplined operations and technology.' : item === 'Customer-focused' ? 'Designed around customer convenience and transparency.' : item === 'Reliable services' ? 'Consistent execution across every transaction.' : 'Support ready when your business needs it most.'}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-950 text-white py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="rounded-4xl border border-slate-800 bg-slate-900 p-10 shadow-2xl shadow-black/20">
-            <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-green-400 mb-3">Join the future</p>
-                <h2 className="text-3xl font-bold">Join the Future of Smart Device Trading</h2>
-                <p className="text-slate-300 leading-7 mt-4">Start with tools that bring order, speed and credibility to every sale.</p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/register"
-                  className="inline-flex items-center justify-center rounded-full bg-green-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/20 hover:bg-green-600 transition"
-                >
-                  Create Free Account
-                </Link>
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-transparent px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
-                >
-                  Browse Devices
-                </Link>
-              </div>
-              <p className="text-slate-300 text-sm mt-4">
-                Sign up for free to access personalized recommendations, order tracking, and secure payment options. Join thousands of satisfied customers today.
+              <h1 className="text-3xl md:text-4xl font-extrabold
+                               text-white mb-3">
+                {storeName}
+              </h1>
+              <p className="text-gray-400 text-base max-w-xl
+                              leading-relaxed">
+                {storeDesc}
               </p>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="max-w-6xl mx-auto px-6 py-16 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Contact</p>
-            <p className="text-slate-700 font-semibold mb-2">Talk directly with our team</p>
-            {settings?.super_admin_phone && (
-              <>
-                <a
-                  href={`https://wa.me/${settings.store_phone.replace(/\D/g, '').replace(/^0/, '234')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green-600 hover:text-green-700 block mb-2"
-                >
-                  WhatsApp: {settings.store_phone}
-                </a>
-                <a href={`tel:${settings.store_phone}`} className="text-slate-600 hover:text-slate-900 block">Phone: {settings.super_admin_phone}</a>
-              </>
+      <div className="max-w-4xl mx-auto px-6 py-12 space-y-10">
+
+        {/* ── CONTACT CARDS ── */}
+        <div>
+          <h2 className="text-xl font-bold text-brand-charcoal mb-6">
+            Contact Us
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2
+                            lg:grid-cols-3 gap-4">
+
+            {/* Phone */}
+            {phone && (
+              <a href={`tel:${phone}`}
+                className="bg-white rounded-2xl p-6 shadow-sm border
+                              border-gray-100 hover:shadow-md hover:border-primary
+                              transition-all group">
+                <div className="w-12 h-12 bg-primary-light rounded-xl
+                                  flex items-center justify-center text-2xl
+                                  mb-4 group-hover:scale-110 transition-transform">
+                  📞
+                </div>
+                <p className="font-bold text-brand-charcoal text-sm mb-1">
+                  Phone
+                </p>
+                <p className="text-primary font-semibold text-sm">
+                  {phone}
+                </p>
+                <p className="text-neutral-slate text-xs mt-1">
+                  Tap to call
+                </p>
+              </a>
+            )}
+
+            {/* WhatsApp */}
+            {whatsappLink && (
+              <a href={whatsappLink} target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white rounded-2xl p-6 shadow-sm border
+                              border-gray-100 hover:shadow-md
+                              hover:border-green-300 transition-all group">
+                <div className="w-12 h-12 bg-green-50 rounded-xl
+                                  flex items-center justify-center text-2xl
+                                  mb-4 group-hover:scale-110 transition-transform">
+                  💬
+                </div>
+                <p className="font-bold text-brand-charcoal text-sm mb-1">
+                  WhatsApp
+                </p>
+                <p className="text-green-600 font-semibold text-sm">
+                  Chat with us
+                </p>
+                <p className="text-neutral-slate text-xs mt-1">
+                  Tap to chat
+                </p>
+              </a>
+            )}
+
+            {/* Email */}
+            {email && (
+              <a href={`mailto:${email}`}
+                className="bg-white rounded-2xl p-6 shadow-sm border
+                              border-gray-100 hover:shadow-md hover:border-blue-200
+                              transition-all group">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl
+                                  flex items-center justify-center text-2xl
+                                  mb-4 group-hover:scale-110 transition-transform">
+                  ✉️
+                </div>
+                <p className="font-bold text-brand-charcoal text-sm mb-1">
+                  Email
+                </p>
+                <p className="text-blue-600 font-semibold text-sm
+                                truncate">
+                  {email}
+                </p>
+                <p className="text-neutral-slate text-xs mt-1">
+                  Tap to email
+                </p>
+              </a>
+            )}
+
+            {/* Address */}
+            {address && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm border
+                                border-gray-100 sm:col-span-2 lg:col-span-1">
+                <div className="w-12 h-12 bg-amber-50 rounded-xl
+                                  flex items-center justify-center text-2xl
+                                  mb-4">
+                  📍
+                </div>
+                <p className="font-bold text-brand-charcoal text-sm mb-1">
+                  Store Location
+                </p>
+                <p className="text-neutral-slate text-sm leading-relaxed">
+                  {address}
+                </p>
+              </div>
+            )}
+
+            {/* Business Hours */}
+            {hours && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm border
+                                border-gray-100">
+                <div className="w-12 h-12 bg-purple-50 rounded-xl
+                                  flex items-center justify-center text-2xl
+                                  mb-4">
+                  🕐
+                </div>
+                <p className="font-bold text-brand-charcoal text-sm mb-1">
+                  Business Hours
+                </p>
+                <p className="text-neutral-slate text-sm leading-relaxed">
+                  {hours}
+                </p>
+              </div>
             )}
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Visit us</p>
-            <p className="text-slate-600 leading-7">{settings?.store_name} Global Service Limited</p>
-            <p className="text-slate-600 leading-7 mt-3">Trusted device sales and services across Nigeria.</p>
+        </div>
+
+        {/* ── SOCIAL LINKS ── */}
+        {(instagram || twitter || facebook) && (
+          <div>
+            <h2 className="text-xl font-bold text-brand-charcoal mb-6">
+              Follow Us
+            </h2>
+            <div className="flex gap-4 flex-wrap">
+              {[
+                {
+                  url: instagram, label: 'Instagram', icon: '📸',
+                  color: 'hover:border-pink-300 hover:bg-pink-50'
+                },
+                {
+                  url: twitter, label: 'Twitter/X', icon: '🐦',
+                  color: 'hover:border-blue-300 hover:bg-blue-50'
+                },
+                {
+                  url: facebook, label: 'Facebook', icon: '👥',
+                  color: 'hover:border-blue-400 hover:bg-blue-50'
+                },
+              ].filter(s => s.url).map((social) => (
+                <a key={social.label}
+                  href={social.url} target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center gap-3 bg-white
+                                 rounded-xl px-5 py-3 shadow-sm border
+                                 border-gray-100 transition-all
+                                 hover:shadow-md ${social.color}`}>
+                  <span className="text-xl">{social.icon}</span>
+                  <span className="font-semibold text-brand-charcoal
+                                     text-sm">
+                    {social.label}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-sm uppercase tracking-[0.35em] text-green-600 mb-3">Follow</p>
-            <p className="text-slate-600 leading-7">Stay updated on product releases and business services.</p>
-            <div className="mt-6 space-y-3 text-green-600 text-sm">
-              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.instagram_url}`} className="hover:text-slate-900 block border-b-2">Join us on Instagram</a>
-              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.facebook_url}`} className="hover:text-slate-900 block border-b-2">Join us on Facebook</a>
-              <a target='_blank' rel='noopener noreferrer' href={`https://${settings?.twitter_url}`} className="hover:text-slate-900 block border-b-2">Join us on Tiktok</a>
+        )}
+
+        {/* ── WHY CHOOSE US ── */}
+        {settings?.why_choose_us?.length > 0 && (
+          <div className="bg-brand-black rounded-3xl p-8 md:p-10">
+            <h2 className="text-xl font-bold text-white text-center mb-8">
+              Why Choose {storeName}?
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {settings.why_choose_us.map((item, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-3xl mb-3">{item.icon}</div>
+                  <p className="text-white font-bold text-sm">
+                    {item.title}
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1
+                                  leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── CTA ── */}
+        <div className="bg-linear-to-r from-primary to-green-500
+                          rounded-3xl p-8 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10
+                            rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative">
+            <h2 className="text-2xl font-extrabold text-white mb-2">
+              Ready to Shop?
+            </h2>
+            <p className="text-white/80 text-sm mb-6">
+              Browse our full collection and find exactly what you need.
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <button
+                onClick={() => navigate('/shop')}
+                className="bg-white text-primary font-bold px-8 py-3
+                             rounded-xl text-sm hover:bg-gray-50 transition-all
+                             hover:scale-[1.03] shadow-lg"
+              >
+                Browse Products →
+              </button>
+              {whatsappLink && (
+                <a href={whatsappLink} target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white/20 hover:bg-white/30 text-white
+                                font-bold px-8 py-3 rounded-xl text-sm
+                                transition-all border border-white/30">
+                  💬 WhatsApp Us
+                </a>
+              )}
             </div>
           </div>
         </div>
-      </section>
-    </main>
+
+      </div>
+    </div>
   )
 }
 
