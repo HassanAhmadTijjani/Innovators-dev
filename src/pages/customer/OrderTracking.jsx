@@ -80,7 +80,7 @@ export default function OrderTracking() {
     useEffect(() => {
         async function load() {
             try {
-                window.scrollTo(0, 0)
+                // window.scrollTo(0, 0)
                 const data = await fetchOrderById(id)
                 setOrder(data)
             } catch {
