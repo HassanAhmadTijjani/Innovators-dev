@@ -5,12 +5,12 @@ import useSettings from '../../hooks/useSettings'
 function Footer() {
     const { settings } = useSettings()
     return (
-        <footer className="bg-green-900 text-white">
+        <footer className="bg-blue-900 text-white">
             <div className="max-w-6xl mx-auto px-6 py-14">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
                     <div className="md:col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-9 h-9 rounded-md flex items-center justify-center text-white font-bold text-sm bg-green-500">
+                            <div className="w-9 h-9 rounded-md flex items-center justify-center text-white font-bold text-sm bg-primary">
                                 MH
                             </div>
                             <div>
@@ -28,7 +28,7 @@ function Footer() {
                         <div className="flex gap-3 mt-6">
                             {['M', 'A', 'Y', 'OR'].map((s) => (
                                 <div key={s}
-                                    className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-gray-400 text-xs font-bold hover:bg-green-600 hover:text-white transition-all cursor-pointer">
+                                    className="w-9 h-9 rounded-lg bg-brand-charcoal flex items-center justify-center text-gray-400 text-xs font-bold hover:bg-primary hover:text-white transition-all cursor-pointer">
                                     {s}
                                 </div>
                             ))}
@@ -80,7 +80,7 @@ function Footer() {
                         href="https://wa.me/2348143128855?text=Hello%20Innovators%20Hub,%20I%20saw%20the%20MayorHub%20system%20and%20I%20want%20something%20similar."
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-gray-400 hover:text-green-800 transition border-l border-blue-500 pl-2   p-2 rounded-sm"
+                        className="text-sm text-gray-400 hover:text-primary transition border-l border-primary pl-2   p-2 rounded-sm"
                     >
                         Built by Innovators Hub
                     </a>                </div>

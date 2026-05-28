@@ -8,7 +8,7 @@ const About = () => {
 
   const storeName = settings?.store_name || 'Our Store'
   const storeDesc = settings?.store_description ||
-    'Your trusted shop for quality electronics and accessories.'
+    'Your trusted shop for quality products and accessories.'
   const phone = settings?.store_phone || ''
   const email = settings?.store_email || ''
   const address = settings?.store_address || ''
@@ -52,7 +52,7 @@ const About = () => {
                   className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-linear-to-br
-                                  from-primary to-green-400 flex items-center
+                                  from-primary to-blue-400 flex items-center
                                   justify-center">
                   <span className="text-white font-bold text-2xl">
                     {storeName.charAt(0)}
@@ -124,8 +124,8 @@ const About = () => {
                 rel="noopener noreferrer"
                 className="bg-white rounded-2xl p-6 shadow-sm border
                               border-gray-100 hover:shadow-md
-                              hover:border-green-300 transition-all group">
-                <div className="w-12 h-12 bg-green-50 rounded-xl
+                              hover:border-blue-300 transition-all group">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl
                                   flex items-center justify-center text-2xl
                                   mb-4 group-hover:scale-110 transition-transform">
                   💬
@@ -133,7 +133,7 @@ const About = () => {
                 <p className="font-bold text-brand-charcoal text-sm mb-1">
                   WhatsApp
                 </p>
-                <p className="text-green-600 font-semibold text-sm">
+                <p className="text-blue-600 font-semibold text-sm">
                   Chat with us
                 </p>
                 <p className="text-neutral-slate text-xs mt-1">
@@ -267,7 +267,7 @@ const About = () => {
         )}
 
         {/* ── CTA ── */}
-        <div className="bg-linear-to-r from-primary to-green-500
+        <div className="bg-linear-to-r from-primary to-blue-500
                           rounded-3xl p-8 text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-white/10
                             rounded-full -translate-y-1/2 translate-x-1/2" />

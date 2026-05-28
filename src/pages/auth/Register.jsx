@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import useSettings from '../../hooks/useSettings'
 
 
 const Register = () => {
@@ -11,6 +12,7 @@ const Register = () => {
     const [form, setForm] = useState({ fullName: '', email: '', password: '', confirm: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const {settings} = useSettings()
 
     // function that runs when a user types anything in the fields
     const handleChange = (e) => {
@@ -47,7 +49,7 @@ const Register = () => {
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-primary">MayorHub</h1>
+                    <h1 className="text-3xl font-extrabold text-primary">{settings?.store_name}</h1>
                     <p className="text-neutral-slate mt-1 text-sm">Create your account</p>
                 </div>
 

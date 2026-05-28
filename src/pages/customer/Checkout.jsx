@@ -8,6 +8,7 @@ import { useCheckout } from '../../hooks/useCheckout'
 import useSettings from '../../hooks/useSettings'
 import toast from 'react-hot-toast'
 
+
 // ─────────────────────────────────────────────
 // SESSION HELPERS
 // ─────────────────────────────────────────────
@@ -168,7 +169,6 @@ export default function Checkout() {
 
     // SAVE SESSION
     useEffect(() => {
-        window.scroll(0, 0)
         // If the order is completed (Step 4), we clear the session storage.
         // This prevents the "Success" state from being persisted, which would
         // block the user from starting a new checkout later.
@@ -182,10 +182,10 @@ export default function Checkout() {
         }
     }, [step, deliveryMethod, form, promoData,
         discount, confirmedOrder, pendingOrderId])
-
-    // WHATSAPP LINK
-    function getWhatsAppUrl() {
-        const productsList = cartItems
+        
+        // WHATSAPP LINK
+        function getWhatsAppUrl() {
+            const productsList = cartItems
             .map(item => `- ${item.products?.name} x${item.quantity}`)
             .join('\n')
 
@@ -194,7 +194,8 @@ export default function Checkout() {
 
         const rawPhone = settings?.store_phone || settings?.super_admin_phone || '2348143128855'
         const formattedPhone = rawPhone.replace(/\D/g, '').replace(/^0/, '234')
-
+        
+        window.scroll(0, 0)
         return `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
     }
 
@@ -229,11 +230,20 @@ export default function Checkout() {
         if (!promoInput.trim()) return
         setPromoError('')
         setPromoLoading(true)
+
         try {
-            const { promoData: data, discountAmount } =
+            const { promoData: data, discountAmount, freeDelivery } =
                 await validatePromoCode(promoInput, cartTotal)
+
             setPromoData(data)
             setDiscount(discountAmount)
+
+            // ✅ if free delivery promo — waive the delivery fee
+            if (freeDelivery) {
+                setDeliveryFee(0)
+                toast.success('🚚 Free delivery applied!')
+            }
+
         } catch (err) {
             setPromoError(err.message)
             setPromoData(null)
@@ -241,14 +251,19 @@ export default function Checkout() {
         } finally {
             setPromoLoading(false)
         }
-    }
+      }
 
-    function handleRemovePromo() {
+      function handleRemovePromo() {
+        // if it was a free delivery promo restore the zone fee
+        if (promoData?.discount_type === 'free_delivery' && deliveryZone) {
+          const zone = DELIVERY_ZONES.find(z => z.value === deliveryZone)
+          if (zone) setDeliveryFee(zone.fee)
+        }
         setPromoInput('')
         setPromoData(null)
         setPromoError('')
         setDiscount(0)
-    }
+      }
 
     // STEP 1 VALIDATION
     function handleStep1Next() {
@@ -537,18 +552,21 @@ export default function Checkout() {
                             </h2>
                             {promoData ? (
                                 <div className="flex items-center justify-between
-                                bg-primary-light rounded-lg px-4 py-3">
+                  bg-primary-light rounded-lg px-4 py-3">
                                     <div>
                                         <p className="text-primary-dark font-semibold text-sm">
                                             ✅ {promoData.code} applied!
                                         </p>
                                         <p className="text-primary text-xs mt-0.5">
-                                            You save ₦{discount.toLocaleString()}
+                                            {promoData.discount_type === 'free_delivery'
+                                                ? '🚚 Free delivery on this order'
+                                                : `You save ${settings?.currency_symbol || '₦'}${discount.toLocaleString()}`
+                                            }
                                         </p>
                                     </div>
                                     <button onClick={handleRemovePromo}
                                         className="text-red-500 text-sm font-medium
-                               hover:text-red-700 transition-colors">
+                 hover:text-red-700 transition-colors">
                                         Remove
                                     </button>
                                 </div>
@@ -870,7 +888,7 @@ export default function Checkout() {
 
                         <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer">
                             <button type="button"
-                                className="w-full mt-3 bg-green-500 hover:bg-green-600
+                                className="w-full mt-3 bg-blue-500 hover:bg-blue-600
                            text-white py-3.5 rounded-xl font-bold text-base
                            text-center transition-all hover:scale-[1.01]
                            flex items-center justify-center gap-2">

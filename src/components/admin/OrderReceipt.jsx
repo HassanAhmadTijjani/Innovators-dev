@@ -144,7 +144,7 @@ const OrderReceipt = forwardRef(({ order, settings }, ref) => {
                     <span className="text-gray-600">Payment Status</span>
                     <span className={`font-bold uppercase
                     ${order.payment_status === 'paid'
-                            ? 'text-green-600'
+                            ? 'text-blue-600'
                             : 'text-amber-600'
                         }`}>
                         {order.payment_status}

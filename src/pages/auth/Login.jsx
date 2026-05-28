@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import useSettings from '../../hooks/useSettings'
 
 export default function Login() {
     const { login, profile } = useAuth()
     const navigate = useNavigate()
+    const {settings} = useSettings()
 
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
@@ -36,7 +38,7 @@ export default function Login() {
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
 
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-primary">MayorHub</h1>
+                    <h1 className="text-3xl font-extrabold text-primary">{settings?.store_name}</h1>
                     <p className="text-neutral-slate mt-1 text-sm">Welcome back</p>
                 </div>
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../../components/common/Layout'
 import { useAuth } from '../../context/AuthContext'
 // import  useAuth  from '../../context/AuthContext'
-import  useProfile  from '../../hooks/useProfile'
+import useProfile from '../../hooks/useProfile'
 import useSettings from '../../hooks/useSettings'
 import toast from 'react-hot-toast'
 
@@ -72,7 +72,7 @@ export default function Profile() {
         }
         try {
             await updateProfile(form)
-            await refreshProfile() 
+            await refreshProfile()
             toast.success('Profile updated successfully!')
         } catch (err) {
             toast.error('Failed to update profile')
@@ -122,7 +122,7 @@ export default function Profile() {
                                         className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br
-                                  from-primary to-green-400 flex items-center
+                                  from-primary to-blue-400 flex items-center
                                   justify-center">
                                         <span className="text-white font-bold text-2xl">
                                             {initials}

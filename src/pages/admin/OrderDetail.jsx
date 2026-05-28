@@ -644,6 +644,8 @@ const OrderDetail = () => {
                                     if (error) {
                                         toast.error('Failed to confirm payment: ' + error.message)
                                     } else {
+                                        // Trigger promo usage check
+                                        await supabase.rpc('handle_order_promo', { p_order_id: order.id })
                                         setOrder({ ...order, payment_status: 'paid' })
                                         toast.success('Payment confirmed!')
                                     }
