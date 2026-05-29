@@ -1,11 +1,13 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import usePublicProducts from '../../hooks/usePublicProducts'
 import useSettings from '../../hooks/useSettings'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
+import StarDisplay from '../../components/common/StarDisplay' // Import the common StarDisplay
+import { useReviews } from '../../hooks/useReviews'
 
 const ProductDetailPage = () => {
     const { slug } = useParams()
@@ -24,6 +26,11 @@ const ProductDetailPage = () => {
     const [activeImage, setActiveImage] = useState(null)
     const [selectedColor, setSelectedColor] = useState(null)
     const [colorError, setColorError] = useState(false)
+    // Reviews
+    const { fetchProductReviews } = useReviews()
+    const [reviews, setReviews] = useState([])
+    const [reviewsLoading, setReviewsLoading] = useState(true)
+    const [avgRating, setAvgRating] = useState(0)
 
     useEffect(() => {
         async function loadProduct() {
@@ -41,7 +48,19 @@ const ProductDetailPage = () => {
     }, [slug])
 
     useEffect(() => {
-        if (product) setActiveImage(product.cover_image)
+        if (product) {
+            setActiveImage(product.cover_image)
+            // load reviews
+            fetchProductReviews(product.id)
+                .then(data => {
+                    setReviews(data)
+                    if (data.length > 0) {
+                        const avg = data.reduce((sum, r) => sum + r.rating, 0) / data.length
+                        setAvgRating(Math.round(avg * 10) / 10)
+                    }
+                })
+                .finally(() => setReviewsLoading(false))
+        }
     }, [product])
 
     async function handleAddToCart() {
@@ -78,7 +97,7 @@ const ProductDetailPage = () => {
         const phone = (settings?.store_phone || '')
             .replace(/\D/g, '').replace(/^0/, '234')
         const message = encodeURIComponent(
-            `Hello ${settings?.store_name || 'MayorHub'}, I want to ask about: ${product?.name}`
+            `Hello ${settings?.store_name || 'MarketMate'}, I want to ask about: ${product?.name}`
         )
         return `https://wa.me/${phone}?text=${message}`
     }
@@ -91,7 +110,7 @@ const ProductDetailPage = () => {
                     <div className="h-6 bg-gray-100 rounded animate-pulse w-1/3" />
                     <div className="h-8 bg-gray-100 rounded animate-pulse" />
                     <div className="h-8 bg-gray-100 rounded animate-pulse w-1/2" />
-                    <div className="h-24 bg-gray-100 rounded animate-pulse" />
+                    <div className="h-24 bg-gray-100 rounded-xl animate-pulse" />
                 </div>
             </div>
         </div>
@@ -370,6 +389,27 @@ const ProductDetailPage = () => {
                             </div>
                         )}
 
+                        {/* Reviews Summary - always show if not loading */}
+                        {!reviewsLoading && (
+                            <div className="mb-6 flex items-center gap-3">
+                                {reviews.length > 0 ? (
+                                    <>
+                                        <StarDisplay rating={Math.round(avgRating)} size="md" />
+                                        <span className="font-bold text-brand-charcoal">
+                                            {avgRating}
+                                        </span>
+                                        <span className="text-neutral-slate text-sm">
+                                            ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                                        </span>
+                                    </>
+                                ) : (
+                                    <span className="text-neutral-slate text-xs italic">
+                                        No reviews yet. Be the first to review!
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
                         {/* Buttons */}
                         <div className="flex flex-col gap-4">
                             <button
@@ -410,6 +450,64 @@ const ProductDetailPage = () => {
                         )}
 
                     </div>
+                </div>
+
+                {/* Actual Reviews List Section */}
+                <div className="border-t border-gray-100 pt-10">
+                    <h2 className="text-xl font-bold text-brand-charcoal mb-8">
+                        Customer Reviews
+                    </h2>
+
+                    {reviewsLoading ? (
+                        <div className="space-y-6">
+                            {[...Array(2)].map((_, i) => (
+                                <div key={i} className="flex gap-4 animate-pulse">
+                                    <div className="w-10 h-10 rounded-full bg-gray-100 shrink-0" />
+                                    <div className="flex-1 space-y-2">
+                                        <div className="h-4 bg-gray-100 rounded w-1/4" />
+                                        <div className="h-3 bg-gray-100 rounded w-1/6" />
+                                        <div className="h-10 bg-gray-100 rounded w-full" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : reviews.length > 0 ? (
+                        <div className="space-y-8">
+                            {reviews.map((review) => (
+                                <div key={review.id} className="flex gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shrink-0">
+                                        {review.profiles?.full_name?.charAt(0).toUpperCase() || 'U'}
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <p className="font-bold text-brand-charcoal text-sm">
+                                                {review.profiles?.full_name || 'Anonymous'}
+                                            </p>
+                                            <span className="text-[10px] text-neutral-slate">
+                                                {new Date(review.created_at).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <StarDisplay rating={review.rating} />
+                                        {review.comment && (
+                                            <div className="mt-1 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3">
+                                                <p
+                                                    className="text-neutral-slate text-sm leading-relaxed break-all whitespace-pre-wrap"
+                                                >
+                                                    "{review.comment}"
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-neutral-light rounded-2xl p-8 text-center border border-dashed border-neutral-border">
+                            <p className="text-neutral-slate text-sm">
+                                There are no approved reviews for this product yet.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

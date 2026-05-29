@@ -1,5 +1,4 @@
 // @ts-nocheck
-import React from 'react'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
@@ -8,66 +7,85 @@ const usePublicProducts = () => {
     const [loading, setLoading] = useState(true)
     const [categories, setCategories] = useState([])
 
-    // Fetching Products
-    const fetchProducts = async (filters = {})=> {
+    async function fetchProducts(filters = {}) {
         setLoading(true)
-        let query = supabase.from('products').select('*, categories(id, name)').eq('is_active', true).order('created_at', {ascending: false})
 
-        // Search filter
-        // ilike is Supabase's case-insensitive search. The % symbols are wildcards — %samsung% matches anything containing "samsung" anywhere in the name — beginning, middle, or end. Regular like is case sensitive — ilike works regardless of uppercase or lowercase.
-        if (filters.search) {
-            query = query.ilike('name', `%${filters.search}%`)
-        }
+        let query = supabase
+            .from('products')
+            .select('*, categories(id, name)')
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
 
-        // Category filter
-        if (filters.category_id) {
-            query = query.eq('category_id', filters.category_id)
-        }
-
-        // Price filter
-        if (filters.min_price) {
-            query = query.gte('price', filters.min_price)
-        }
-        if (filters.max_price) {
-            query = query.lte('price', filters.max_price)
-        }
+        if (filters.search) query = query.ilike('name', `%${filters.search}%`)
+        if (filters.category_id) query = query.eq('category_id', filters.category_id)
+        if (filters.min_price) query = query.gte('price', filters.min_price)
+        if (filters.max_price) query = query.lte('price', filters.max_price)
 
         const { data, error } = await query
 
-        if (!error) setProducts(data)
+        if (!error && data) {
+            // fetch review stats for all products in one query
+            const productIds = data.map(p => p.id)
+            const { data: reviewData } = await supabase
+                .from('reviews')
+                .select('product_id, rating')
+                .in('product_id', productIds)
+                .eq('is_approved', true)
+
+            // calculate avg rating per product
+            const ratingMap = {}
+            if (reviewData) {
+                reviewData.forEach(r => {
+                    if (!ratingMap[r.product_id]) {
+                        ratingMap[r.product_id] = { sum: 0, count: 0 }
+                    }
+                    ratingMap[r.product_id].sum += r.rating
+                    ratingMap[r.product_id].count += 1
+                })
+            }
+
+            // enrich products with rating data
+            const enriched = data.map(p => ({
+                ...p,
+                avg_rating: ratingMap[p.id]
+                    ? Math.round((ratingMap[p.id].sum / ratingMap[p.id].count) * 10) / 10
+                    : null,
+                review_count: ratingMap[p.id]?.count || 0,
+            }))
+
+            setProducts(enriched)
+        }
         setLoading(false)
     }
 
-    // Fetch products by slug. fetch the products name and id then make it our slug
-    const fetchProductBySlug = async (slug) => {
-        const { data, error } = await supabase.from('products').select('*, categories(id, name)').eq('slug', slug).eq('is_active', true).single()
+    async function fetchProductBySlug(slug) {
+        const { data, error } = await supabase
+            .from('products')
+            .select('*, categories(id, name)')
+            .eq('slug', slug)
+            .eq('is_active', true)
+            .single()
         if (error) throw error
         return data
     }
 
-    // Fetch categories
-   const fetchCategories = async() => {
+    async function fetchCategories() {
         const { data } = await supabase
             .from('categories')
             .select('*')
             .order('name')
         if (data) setCategories(data)
     }
-    
+
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchProducts()
         fetchCategories()
     }, [])
 
-    return ({
-        products,
-        loading,
-        categories,
-        fetchProducts,
-        fetchProductBySlug,
-  }
-  )
+    return {
+        products, loading, categories,
+        fetchProducts, fetchProductBySlug,
+    }
 }
 
 export default usePublicProducts

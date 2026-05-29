@@ -19,3 +19,14 @@
 - Store info from settings
 - WhatsApp contact link
 - Dynamic business hours
+
+### v2.1 - Promocodes
+
+-Admin add, delete, edit promocodes
+-User get promocodes
+-UI refinering
+
+### v2.2 - Reviews
+
+-User leave review
+-Admin see approve or diapprove reviews

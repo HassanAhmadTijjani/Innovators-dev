@@ -12,8 +12,9 @@ const AdminLayout = ({ children }) => {
         { label: 'Customers', to: '/admin/customers', icon: '👥', superOnly: true },
         { label: 'Staff', to: '/admin/staff', icon: '👨‍💼', superOnly: true },
         { label: 'Promo Codes', to: '/admin/promos', icon: '🎟️', superOnly: false },
-        { label: 'Analytics', to: '/admin/analytics', icon: '📈', superOnly: true },
+        // { label: 'Analytics', to: '/admin/analytics', icon: '📈', superOnly: true },
         { label: 'Settings', to: '/admin/settings', icon: '⚙️', superOnly: true },
+        { label: 'Reviews', to: '/admin/reviews', icon: '⭐', superOnly: false },
       ]
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const { profile, logout } = useAuth()
