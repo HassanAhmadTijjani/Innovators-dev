@@ -530,7 +530,7 @@ export default function CustomerHome() {
                             { name: 'Phones', icon: '📱', desc: 'Flagships & Budget' },
                             { name: 'Laptops', icon: '💻', desc: 'Work & Gaming' },
                             { name: 'Accessories', icon: '🎧', desc: 'Premium Audio' },
-                            { name: 'Tablets', icon: '平板', desc: 'IPads & More' }
+                            { name: 'Tablets', icon: '📱', desc: 'IPads & More' }
                         ]).map((cat) => (
                             <button
                                 key={cat.name}
