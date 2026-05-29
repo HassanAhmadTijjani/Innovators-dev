@@ -112,19 +112,16 @@ export default function Settings() {
     }
 
     function addCategory() {
-        setForm({ ...form, store_categories: [...form.store_categories, { name: '', icon: '', desc: '' }] })
+        setForm({ ...form, store_categories: [...(form.store_categories || []), { name: '', icon: '', desc: '' }] })
     }
-
     function removeCategory(index) {
-        setForm({ ...form, store_categories: form.store_categories.filter((_, i) => i !== index) })
+        setForm({ ...form, store_categories: (form.store_categories || []).filter((_, i) => i !== index) })
     }
-
     function addWhyChooseUs() {
-        setForm({ ...form, why_choose_us: [...form.why_choose_us, { title: '', icon: '', desc: '' }] })
+        setForm({ ...form, why_choose_us: [...(form.why_choose_us || []), { title: '', icon: '', desc: '' }] })
     }
-
     function removeWhyChooseUs(index) {
-        setForm({ ...form, why_choose_us: form.why_choose_us.filter((_, i) => i !== index) })
+        setForm({ ...form, why_choose_us: (form.why_choose_us || []).filter((_, i) => i !== index) })
     }
 
     async function handleLogoUpload(e) {
@@ -154,8 +151,8 @@ export default function Settings() {
         // Clean up empty entries (where name or title is empty) before saving
         const cleanedForm = {
             ...form,
-            store_categories: form.store_categories.filter(c => c.name?.trim()),
-            why_choose_us: form.why_choose_us.filter(w => w.title?.trim())
+            store_categories: (form.store_categories || []).filter(c => c.name?.trim()),
+            why_choose_us: (form.why_choose_us || []).filter(w => w.title?.trim())
         }
 
         try {

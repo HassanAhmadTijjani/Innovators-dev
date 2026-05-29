@@ -82,7 +82,7 @@ function Footer() {
                         rel="noopener noreferrer"
                         className="text-sm text-gray-400 hover:text-primary transition border-l border-primary pl-2   p-2 rounded-sm"
                     >
-                        Built by Innovators Hub
+                        Built by MarketMate
                     </a>                </div>
 
             </div>
