@@ -35,7 +35,7 @@ const Navbar = () => {
                     )}
 
                     <h1 className="font-bold text-xl">
-                        {settings?.store_name || 'MayorHub'}
+                        {settings?.store_name || 'MarketMate'}
                     </h1>
                 </div>
 
