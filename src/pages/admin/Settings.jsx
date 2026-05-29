@@ -111,6 +111,22 @@ export default function Settings() {
         setForm({ ...form, store_categories: updated })
     }
 
+    function addCategory() {
+        setForm({ ...form, store_categories: [...form.store_categories, { name: '', icon: '', desc: '' }] })
+    }
+
+    function removeCategory(index) {
+        setForm({ ...form, store_categories: form.store_categories.filter((_, i) => i !== index) })
+    }
+
+    function addWhyChooseUs() {
+        setForm({ ...form, why_choose_us: [...form.why_choose_us, { title: '', icon: '', desc: '' }] })
+    }
+
+    function removeWhyChooseUs(index) {
+        setForm({ ...form, why_choose_us: form.why_choose_us.filter((_, i) => i !== index) })
+    }
+
     async function handleLogoUpload(e) {
         const file = e.target.files[0]
         if (!file) return
@@ -134,8 +150,18 @@ export default function Settings() {
     async function handleSave(e) {
         e.preventDefault()
         setSaving(true)
+
+        // Clean up empty entries (where name or title is empty) before saving
+        const cleanedForm = {
+            ...form,
+            store_categories: form.store_categories.filter(c => c.name?.trim()),
+            why_choose_us: form.why_choose_us.filter(w => w.title?.trim())
+        }
+
         try {
-            await updateSettings(form)
+            await updateSettings(cleanedForm)
+            // Refresh form with cleaned data
+            setForm(cleanedForm)
             toast.success('Settings saved!')
         } catch (err) {
             toast.error('Failed to save: ' + err.message)
@@ -306,18 +332,30 @@ export default function Settings() {
                                 <h2 className="font-semibold text-brand-charcoal mb-1">
                                     🗂️ Homepage Categories
                                 </h2>
-                                <p className="text-neutral-slate text-xs mb-5">
-                                    The 3 categories shown on your homepage
-                                </p>
+                                <div className="flex justify-between items-center mb-5">
+                                    <p className="text-neutral-slate text-xs">
+                                        Categories highlighted on your homepage
+                                    </p>
+                                    <button type="button" onClick={addCategory}
+                                        className="text-xs bg-primary-light text-primary-dark px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-all">
+                                        + Add Category
+                                    </button>
+                                </div>
                                 <div className="space-y-4">
                                     {(form.store_categories || []).map((cat, i) => (
                                         <div key={i}
                                             className="border border-gray-100 rounded-xl
-                                    p-4 space-y-3">
-                                            <p className="text-xs font-bold text-neutral-slate
-                                    uppercase tracking-wider">
-                                                Category {i + 1}
-                                            </p>
+                                    p-4 space-y-3 relative group">
+                                            <div className="flex justify-between items-center">
+                                                <p className="text-xs font-bold text-neutral-slate
+                                        uppercase tracking-wider">
+                                                    Category {i + 1}
+                                                </p>
+                                                <button type="button" onClick={() => removeCategory(i)}
+                                                    className="text-xs text-red-500 font-bold hover:underline transition-all">
+                                                    Remove
+                                                </button>
+                                            </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <input type="text" value={cat.name || ''}
                                                     onChange={e => handleCategories(i, 'name', e.target.value)}
@@ -346,21 +384,35 @@ export default function Settings() {
                             {/* Why Choose Us */}
                             <div className="bg-white rounded-xl p-6 shadow-sm border
                               border-gray-100">
-                                <h2 className="font-semibold text-brand-charcoal mb-1">
-                                    💡 Why Choose Us
-                                </h2>
-                                <p className="text-neutral-slate text-xs mb-5">
-                                    4 reasons shown at the bottom of the homepage
-                                </p>
+                                <div className="flex justify-between items-center mb-5">
+                                    <div>
+                                        <h2 className="font-semibold text-brand-charcoal mb-1">
+                                            💡 Why Choose Us
+                                        </h2>
+                                        <p className="text-neutral-slate text-xs">
+                                            Reasons shown at the bottom of the homepage
+                                        </p>
+                                    </div>
+                                    <button type="button" onClick={addWhyChooseUs}
+                                        className="text-xs bg-primary-light text-primary-dark px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-all">
+                                        + Add Reason
+                                    </button>
+                                </div>
                                 <div className="space-y-4">
                                     {(form.why_choose_us || []).map((item, i) => (
                                         <div key={i}
                                             className="border border-gray-100 rounded-xl
-                                    p-4 space-y-3">
-                                            <p className="text-xs font-bold text-neutral-slate
-                                    uppercase tracking-wider">
-                                                Reason {i + 1}
-                                            </p>
+                                    p-4 space-y-3 relative group">
+                                            <div className="flex justify-between items-center">
+                                                <p className="text-xs font-bold text-neutral-slate
+                                        uppercase tracking-wider">
+                                                    Reason {i + 1}
+                                                </p>
+                                                <button type="button" onClick={() => removeWhyChooseUs(i)}
+                                                    className="text-xs text-red-500 font-bold hover:underline transition-all">
+                                                    Remove
+                                                </button>
+                                            </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <input type="text" value={item.icon || ''}
                                                     onChange={e => handleWhyChooseUs(i, 'icon', e.target.value)}

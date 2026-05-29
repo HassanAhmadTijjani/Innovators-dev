@@ -65,6 +65,9 @@ export default function PromoCodes() {
         if (form.discount_type !== 'free_delivery' && !form.discount_value) {
             return toast.error('Discount value is required')
         }
+        if (form.discount_type === 'percentage' && (Number(form.discount_value) <= 0 || Number(form.discount_value) > 100)) {
+            return toast.error('Percentage discount must be between 1 and 100')
+        }
 
         setSaving(true)
         try {
