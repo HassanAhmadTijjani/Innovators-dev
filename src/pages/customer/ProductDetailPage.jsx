@@ -482,7 +482,9 @@ const ProductDetailPage = () => {
                             {reviews.map((review) => (
                                 <div key={review.id} className="flex gap-4">
                                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shrink-0">
-                                        {review.profiles?.full_name?.charAt(0).toUpperCase() || 'U'}
+                                        {review.profiles?.avatar_url ? (
+                                            <img src={review.profiles?.avatar_url} alt="Profile" className='h-10 w-10 rounded-full object-cover'/>
+                                        ) : review.profiles?.full_name?.charAt(0).toUpperCase() }
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between mb-1">

@@ -682,3 +682,12 @@ create policy "Admin can manage all reviews"
   on reviews for all
   using (is_admin())
   with check (is_admin());
+
+-- ── PUBLIC VIEWS ─────────────────────────────
+-- This view allows anyone to see reviewer names/avatars without 
+-- exposing sensitive fields like email or phone numbers.
+create or replace view public_profiles as
+  select id, full_name, avatar_url
+  from profiles;
+
+grant select on public_profiles to anon, authenticated;
