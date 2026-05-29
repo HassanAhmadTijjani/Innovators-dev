@@ -8,7 +8,7 @@ export function useReviews() {
     async function fetchProductReviews(productId) {
         const { data, error } = await supabase
             .from('reviews')
-            .select('*, profiles (full_name, avatar_url)')
+            .select(`*, profiles:public_profiles!reviews_customer_id_fkey (full_name, avatar_url)`)
             .eq('product_id', productId)
             .eq('is_approved', true)
             .order('created_at', { ascending: false })
