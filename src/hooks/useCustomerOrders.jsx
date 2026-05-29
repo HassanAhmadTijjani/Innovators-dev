@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -8,7 +7,6 @@ export function useCustomerOrders() {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
 
-    // fetch all users order
     async function fetchMyOrders() {
         if (!user) return
         setLoading(true)
@@ -18,7 +16,9 @@ export function useCustomerOrders() {
             .select(`
         *,
         order_items (
-          id, name, price, quantity, subtotal, selected_color,
+          id, name, price, quantity, subtotal,
+          product_id,
+          selected_color,
           products (cover_image, slug)
         )
       `)
@@ -29,14 +29,15 @@ export function useCustomerOrders() {
         setLoading(false)
     }
 
-    // fetch users single order
     async function fetchOrderById(id) {
         const { data, error } = await supabase
             .from('orders')
             .select(`
         *,
         order_items (
-          id, name, price, quantity, subtotal, selected_color,
+          id, name, price, quantity, subtotal,
+          product_id,
+          selected_color,
           products (cover_image, slug)
         )
       `)

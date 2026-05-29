@@ -57,6 +57,25 @@ duration-300 cursor-pointer overflow-hidden group"
                     {product.name}
                 </h3>
 
+                {/* Star Rating */}
+                {product.avg_rating && (
+                    <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map(s => (
+                            <span key={s}
+                                className={`text-xs
+              ${s <= Math.round(product.avg_rating)
+                                        ? 'text-amber-400'
+                                        : 'text-gray-200'
+                                    }`}>
+                                ★
+                            </span>
+                        ))}
+                        <span className="text-xs text-neutral-slate ml-1">
+                            ({product.review_count || 0})
+                        </span>
+                    </div>
+                )}
+
                 {/* Price & Button */}
                 <div className="flex justify-between">
                     <p className="text-sm font-bold text-primary">

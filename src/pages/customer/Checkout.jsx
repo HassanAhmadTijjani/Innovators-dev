@@ -908,7 +908,7 @@ export default function Checkout() {
                 {step === 4 && confirmedOrder && (
                     <div className="text-center">
                         <div className="w-20 h-20 bg-primary-light rounded-full flex
-                            items-center justify-center text-4xl mx-auto mb-6">
+                            items-center justify-center text-4xl mx-auto mb-6 animate-ping">
                             ✅
                         </div>
                         <h1 className="text-2xl font-bold text-brand-charcoal mb-2">

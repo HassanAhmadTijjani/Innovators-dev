@@ -584,3 +584,101 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION handle_order_promo(UUID) TO authenticated;
+
+
+
+
+----------------------------------------------
+-- Reviews
+-----------------------------------------------
+-- Reviews table
+create table reviews (
+  id          uuid primary key default gen_random_uuid(),
+  product_id  uuid references products(id) on delete cascade,
+  customer_id uuid references profiles(id) on delete cascade,
+  order_id    uuid references orders(id) on delete cascade,
+  rating      integer not null check (rating between 1 and 5),
+  comment     text,
+  is_approved boolean default true,
+  created_at  timestamptz default now(),
+  -- one review per product per customer per order
+  unique(product_id, customer_id, order_id)
+);
+
+-- RLS
+alter table reviews enable row level security;
+
+create policy "Anyone can read approved reviews"
+  on reviews for select
+  using (is_approved = true or is_admin());
+
+create policy "Customers can insert own reviews"
+  on reviews for insert
+  with check (auth.uid() = customer_id);
+
+create policy "Customers can update own reviews"
+  on reviews for update
+  using (auth.uid() = customer_id);
+
+create policy "Admin can manage all reviews"
+  on reviews for all
+  using (is_admin());
+
+-- Function to get average rating for a product
+create or replace function get_product_rating(p_product_id uuid)
+returns table(avg_rating numeric, review_count bigint) as $$
+  select
+    round(avg(rating)::numeric, 1) as avg_rating,
+    count(*)                        as review_count
+  from reviews
+  where product_id = p_product_id
+    and is_approved = true;
+$$ language sql stable;
+
+-- Add avg_rating and review_count to products view
+-- We'll calculate this in the frontend for simplicity
+-- Ensure unique constraint exists (prevents DB-level duplicates)
+alter table reviews
+drop constraint if exists reviews_product_id_customer_id_order_id_key;
+
+alter table reviews
+add constraint reviews_unique_per_order
+unique (product_id, customer_id, order_id);
+
+-- Allow admin to read all products (including inactive) for reviews join
+drop policy if exists "Anyone can read active products" on products;
+
+create policy "Anyone can read active products"
+  on products for select
+  using (is_active = true or is_admin());
+
+-- Reviews RLS — make sure all policies exist
+drop policy if exists "Anyone can read approved reviews"  on reviews;
+drop policy if exists "Customers can insert own reviews"  on reviews;
+drop policy if exists "Customers can update own reviews"  on reviews;
+drop policy if exists "Admin can manage all reviews"      on reviews;
+
+create policy "Anyone can read approved reviews"
+  on reviews for select
+  using (is_approved = true or is_admin());
+
+create policy "Customers can insert own reviews"
+  on reviews for insert
+  with check (
+    auth.uid() = customer_id
+    and exists (
+      select 1 from orders
+      where orders.id        = order_id
+        and orders.customer_id = auth.uid()
+        and orders.status    = 'delivered'
+    )
+  );
+
+create policy "Customers can update own reviews"
+  on reviews for update
+  using (auth.uid() = customer_id);
+
+create policy "Admin can manage all reviews"
+  on reviews for all
+  using (is_admin())
+  with check (is_admin());

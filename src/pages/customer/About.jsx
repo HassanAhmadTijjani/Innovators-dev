@@ -213,15 +213,15 @@ const About = () => {
             <div className="flex gap-4 flex-wrap">
               {[
                 {
-                  url: instagram, label: 'Instagram', icon: '📸',
+                  url: settings?.instagram_url, label: 'Instagram', icon: '📸',
                   color: 'hover:border-pink-300 hover:bg-pink-50'
                 },
                 {
-                  url: twitter, label: 'Twitter/X', icon: '🐦',
+                  url: settings?.twitter_url, label: 'Twitter/X', icon: '🐦',
                   color: 'hover:border-blue-300 hover:bg-blue-50'
                 },
                 {
-                  url: facebook, label: 'Facebook', icon: '👥',
+                  url: settings?.facebook_url, label: 'Facebook', icon: '👥',
                   color: 'hover:border-blue-400 hover:bg-blue-50'
                 },
               ].filter(s => s.url).map((social) => (
